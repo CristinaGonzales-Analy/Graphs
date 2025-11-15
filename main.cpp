@@ -36,22 +36,46 @@ void createAdjacencyMatrix() {
     vector<vector<int>> adjMatrix(v, vector<int>(v, 0));
 
     cout << "Enter edges (u v) where u and v are vertex indices:\n";
+    cout << "(Note: Self-loops are allowed, e.g., 2 2)\n";
+    
     for (int i = 0; i < e; i++) {
-        int u, v;
-        cin >> u >> v;
-        adjMatrix[u][v] = 1;
-        adjMatrix[v][u] = 1; // For undirected graph
+        int u, w;
+        cin >> u >> w;
+        
+        // Validate vertex indices
+        if (u < 0 || u >= v || w < 0 || w >= v) {
+            cout << "Invalid edge (" << u << " " << w << "). Vertices must be between 0 and " << v-1 << ".\n";
+            i--;  // Don't count this as a valid edge
+            continue;
+        }
+        
+        // Handle self-loop
+        if (u == w) {
+            cout << "Self-loop detected at vertex " << u << "\n";
+            adjMatrix[u][w] = 1;
+        } else {
+            // Regular edge (undirected)
+            adjMatrix[u][w] = 1;
+            adjMatrix[w][u] = 1;
+        }
     }
 
-    cout << "Adjacency Matrix:\n";
+    cout << "\nAdjacency Matrix:\n";
+    cout << "   ";
     for (int i = 0; i < v; i++) {
+        cout << i << " ";
+    }
+    cout << "\n";
+    
+    for (int i = 0; i < v; i++) {
+        cout << i << ": ";
         for (int j = 0; j < v; j++) {
             cout << adjMatrix[i][j] << " ";
         }
         cout << endl;
     }
+    
 }
-
 
 void createAdjacencyList() {
     int v, e;
@@ -68,22 +92,41 @@ void createAdjacencyList() {
     vector<Node*> adjList(v, nullptr);
 
     cout << "Enter edges (u v) where u and v are vertex indices:\n";
+    cout << "(Note: Self-loops are allowed, e.g., 2 2)\n";
+    
     for (int i = 0; i < e; i++) {
-        int u, v;
-        cin >> u >> v;
+        int u, w;
+        cin >> u >> w;
+        
+        // Validate vertex indices
+        if (u < 0 || u >= v || w < 0 || w >= v) {
+            cout << "Invalid edge (" << u << " " << w << "). Vertices must be between 0 and " << v-1 << ".\n";
+            i--;  // Don't count this as a valid edge
+            continue;
+        }
+        
+        // Handle self-loop
+        if (u == w) {
+            cout << "Self-loop detected at vertex " << u << "\n";
+            Node* newNode = new Node();
+            newNode->vertex = u;
+            newNode->next = adjList[u];
+            adjList[u] = newNode;
+        } else {
+            // Regular edge (undirected)
+            Node* newNode = new Node();
+            newNode->vertex = w;
+            newNode->next = adjList[u];
+            adjList[u] = newNode;
 
-        Node* newNode = new Node();
-        newNode->vertex = v;
-        newNode->next = adjList[u];
-        adjList[u] = newNode;
-
-        newNode = new Node();
-        newNode->vertex = u;
-        newNode->next = adjList[v];
-        adjList[v] = newNode; // For undirected graph
+            newNode = new Node();
+            newNode->vertex = u;
+            newNode->next = adjList[w];
+            adjList[w] = newNode;
+        }
     }
 
-    cout << "Adjacency List:\n";
+    cout << "\nAdjacency List:\n";
     for (int i = 0; i < v; i++) {
         cout << i << ": ";
         Node* temp = adjList[i];
@@ -103,7 +146,8 @@ void createAdjacencyList() {
             current = current->next;
             delete toDelete;
         }
-        adjList[i] = nullptr;  
+        adjList[i] = nullptr; 
     }
     cout << "Memory cleaned up successfully.\n";
 }
+
