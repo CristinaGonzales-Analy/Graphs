@@ -33,14 +33,15 @@ void createAdjacencyMatrix() {
     cout << "Enter number of edges: ";
     cin >> e;
 
+
     vector<vector<int>> adjMatrix(v, vector<int>(v, 0));
 
-    cout << "Enter edges (u v) where u and v are vertex indices:\n";
-    cout << "(Note: Self-loops are allowed, e.g., 2 2)\n";
+    cout << "Enter edges (u v weight) where u and v are vertex indices:\n";
+    cout << "(Note: Self-loops are allowed, e.g., 2 2 5)\n";
     
     for (int i = 0; i < e; i++) {
-        int u, w;
-        cin >> u >> w;
+        int u, w, weight;
+        cin >> u >> w >> weight;
         
         // Validate vertex indices
         if (u < 0 || u >= v || w < 0 || w >= v) {
@@ -49,18 +50,25 @@ void createAdjacencyMatrix() {
             continue;
         }
         
+        // Validate weight
+        if (weight <= 0) {
+            cout << "Invalid weight. Weight must be positive.\n";
+            i--;
+            continue;
+        }
+        
         // Handle self-loop
         if (u == w) {
-            cout << "Self-loop detected at vertex " << u << "\n";
-            adjMatrix[u][w] = 1;
+            cout << "Self-loop detected at vertex " << u << " with weight " << weight << "\n";
+            adjMatrix[u][w] = weight;
         } else {
             // Regular edge (undirected)
-            adjMatrix[u][w] = 1;
-            adjMatrix[w][u] = 1;
+            adjMatrix[u][w] = weight;
+            adjMatrix[w][u] = weight;
         }
     }
 
-    cout << "\nAdjacency Matrix:\n";
+    cout << "\nAdjacency Matrix (0 means no edge):\n";
     cout << "   ";
     for (int i = 0; i < v; i++) {
         cout << i << " ";
@@ -77,6 +85,7 @@ void createAdjacencyMatrix() {
     
 }
 
+
 void createAdjacencyList() {
     int v, e;
     cout << "Enter number of vertices: ";
@@ -86,17 +95,19 @@ void createAdjacencyList() {
 
     struct Node {
         int vertex;
+        int weight;  // Added weight field
         Node* next;
     };
 
+   
     vector<Node*> adjList(v, nullptr);
 
-    cout << "Enter edges (u v) where u and v are vertex indices:\n";
-    cout << "(Note: Self-loops are allowed, e.g., 2 2)\n";
+    cout << "Enter edges (u v weight) where u and v are vertex indices:\n";
+    cout << "(Note: Self-loops are allowed, e.g., 2 2 5)\n";
     
     for (int i = 0; i < e; i++) {
-        int u, w;
-        cin >> u >> w;
+        int u, w, weight;
+        cin >> u >> w >> weight;
         
         // Validate vertex indices
         if (u < 0 || u >= v || w < 0 || w >= v) {
@@ -105,22 +116,32 @@ void createAdjacencyList() {
             continue;
         }
         
+        // Validate weight
+        if (weight <= 0) {
+            cout << "Invalid weight. Weight must be positive.\n";
+            i--;
+            continue;
+        }
+        
         // Handle self-loop
         if (u == w) {
-            cout << "Self-loop detected at vertex " << u << "\n";
+            cout << "Self-loop detected at vertex " << u << " with weight " << weight << "\n";
             Node* newNode = new Node();
             newNode->vertex = u;
+            newNode->weight = weight;
             newNode->next = adjList[u];
             adjList[u] = newNode;
         } else {
             // Regular edge (undirected)
             Node* newNode = new Node();
             newNode->vertex = w;
+            newNode->weight = weight;
             newNode->next = adjList[u];
             adjList[u] = newNode;
 
             newNode = new Node();
             newNode->vertex = u;
+            newNode->weight = weight;
             newNode->next = adjList[w];
             adjList[w] = newNode;
         }
@@ -131,7 +152,7 @@ void createAdjacencyList() {
         cout << i << ": ";
         Node* temp = adjList[i];
         while (temp) {
-            cout << temp->vertex << " -> ";
+            cout << "(" << temp->vertex << ", w:" << temp->weight << ") -> ";
             temp = temp->next;
         }
         cout << "nullptr" << endl;
@@ -146,8 +167,7 @@ void createAdjacencyList() {
             current = current->next;
             delete toDelete;
         }
-        adjList[i] = nullptr; 
+        adjList[i] = nullptr;  
     }
     cout << "Memory cleaned up successfully.\n";
 }
-
