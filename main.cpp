@@ -28,15 +28,31 @@ int main() {
 
 void createAdjacencyMatrix() {
     int v, e;
+    char graphType;
+    bool isDirected;
+    
     cout << "Enter number of vertices: ";
     cin >> v;
     cout << "Enter number of edges: ";
     cin >> e;
+    cout << "Is the graph directed? (y/n): ";
+    cin >> graphType;
+    
+    isDirected = (graphType == 'y' || graphType == 'Y');
+    
+    if (isDirected) {
+        cout << "Creating a DIRECTED graph...\n";
+    } else {
+        cout << "Creating an UNDIRECTED graph...\n";
+    }
 
-
+    // Initialize with 0 (0 means no edge)
     vector<vector<int>> adjMatrix(v, vector<int>(v, 0));
 
     cout << "Enter edges (u v weight) where u and v are vertex indices:\n";
+    if (isDirected) {
+        cout << "(Edge direction: u -> v)\n";
+    }
     cout << "(Note: Self-loops are allowed, e.g., 2 2 5)\n";
     
     for (int i = 0; i < e; i++) {
@@ -62,9 +78,13 @@ void createAdjacencyMatrix() {
             cout << "Self-loop detected at vertex " << u << " with weight " << weight << "\n";
             adjMatrix[u][w] = weight;
         } else {
-            // Regular edge (undirected)
+            // Add edge u -> w
             adjMatrix[u][w] = weight;
-            adjMatrix[w][u] = weight;
+            
+            // If undirected, also add edge w -> u
+            if (!isDirected) {
+                adjMatrix[w][u] = weight;
+            }
         }
     }
 
@@ -83,15 +103,33 @@ void createAdjacencyMatrix() {
         cout << endl;
     }
     
+    // Show interpretation for directed graphs
+    if (isDirected) {
+        cout << "\n(Row i, Column j represents edge from vertex i to vertex j)\n";
+    }
+    
 }
 
 
 void createAdjacencyList() {
     int v, e;
+    char graphType;
+    bool isDirected;
+    
     cout << "Enter number of vertices: ";
     cin >> v;
     cout << "Enter number of edges: ";
     cin >> e;
+    cout << "Is the graph directed? (y/n): ";
+    cin >> graphType;
+    
+    isDirected = (graphType == 'y' || graphType == 'Y');
+    
+    if (isDirected) {
+        cout << "Creating a DIRECTED graph...\n";
+    } else {
+        cout << "Creating an UNDIRECTED graph...\n";
+    }
 
     struct Node {
         int vertex;
@@ -99,10 +137,12 @@ void createAdjacencyList() {
         Node* next;
     };
 
-   
     vector<Node*> adjList(v, nullptr);
 
     cout << "Enter edges (u v weight) where u and v are vertex indices:\n";
+    if (isDirected) {
+        cout << "(Edge direction: u -> v)\n";
+    }
     cout << "(Note: Self-loops are allowed, e.g., 2 2 5)\n";
     
     for (int i = 0; i < e; i++) {
@@ -132,18 +172,21 @@ void createAdjacencyList() {
             newNode->next = adjList[u];
             adjList[u] = newNode;
         } else {
-            // Regular edge (undirected)
+            // Add edge u -> w
             Node* newNode = new Node();
             newNode->vertex = w;
             newNode->weight = weight;
             newNode->next = adjList[u];
             adjList[u] = newNode;
 
-            newNode = new Node();
-            newNode->vertex = u;
-            newNode->weight = weight;
-            newNode->next = adjList[w];
-            adjList[w] = newNode;
+            // If undirected, also add edge w -> u
+            if (!isDirected) {
+                newNode = new Node();
+                newNode->vertex = u;
+                newNode->weight = weight;
+                newNode->next = adjList[w];
+                adjList[w] = newNode;
+            }
         }
     }
 
@@ -158,6 +201,10 @@ void createAdjacencyList() {
         cout << "nullptr" << endl;
     }
     
+    if (isDirected) {
+        cout << "\n(Vertex i's list shows all vertices reachable FROM vertex i)\n";
+    }
+    
     // Clean up dynamically allocated memory
     cout << "\nCleaning up memory...\n";
     for (int i = 0; i < v; i++) {
@@ -167,7 +214,7 @@ void createAdjacencyList() {
             current = current->next;
             delete toDelete;
         }
-        adjList[i] = nullptr;  
+        adjList[i] = nullptr;  // Good practice
     }
     cout << "Memory cleaned up successfully.\n";
 }
