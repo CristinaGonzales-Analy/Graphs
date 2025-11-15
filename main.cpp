@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
 void createAdjacencyMatrix();
@@ -32,10 +33,7 @@ void createAdjacencyMatrix() {
     cout << "Enter number of edges: ";
     cin >> e;
 
-    int adjMatrix[v][v];
-    for (int i = 0; i < v; i++)
-        for (int j = 0; j < v; j++)
-            adjMatrix[i][j] = 0;
+    vector<vector<int>> adjMatrix(v, vector<int>(v, 0));
 
     cout << "Enter edges (u v) where u and v are vertex indices:\n";
     for (int i = 0; i < e; i++) {
@@ -54,8 +52,7 @@ void createAdjacencyMatrix() {
     }
 }
 
-// Adjacenct list is an array of pointers to the head nodes of linked lists.
-// Each linked list represents the vertices that are adjacent to a particular vertex.
+
 void createAdjacencyList() {
     int v, e;
     cout << "Enter number of vertices: ";
@@ -68,9 +65,7 @@ void createAdjacencyList() {
         Node* next;
     };
 
-    Node* adjList[v];
-    for (int i = 0; i < v; i++)
-        adjList[i] = nullptr;
+    vector<Node*> adjList(v, nullptr);
 
     cout << "Enter edges (u v) where u and v are vertex indices:\n";
     for (int i = 0; i < e; i++) {
@@ -97,5 +92,18 @@ void createAdjacencyList() {
             temp = temp->next;
         }
         cout << "nullptr" << endl;
-    }  
+    }
+    
+    // Clean up dynamically allocated memory
+    cout << "\nCleaning up memory...\n";
+    for (int i = 0; i < v; i++) {
+        Node* current = adjList[i];
+        while (current) {
+            Node* toDelete = current;
+            current = current->next;
+            delete toDelete;
+        }
+        adjList[i] = nullptr;  
+    }
+    cout << "Memory cleaned up successfully.\n";
 }
