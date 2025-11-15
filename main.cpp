@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <climits>
 using namespace std;
 
 void createAdjacencyMatrix();
@@ -46,8 +47,16 @@ void createAdjacencyMatrix() {
         cout << "Creating an UNDIRECTED graph...\n";
     }
 
+  
     // Initialize with 0 (0 means no edge)
     vector<vector<int>> adjMatrix(v, vector<int>(v, 0));
+
+    // Variables to track statistics
+    int totalWeight = 0;
+    int minWeight = INT_MAX;
+    int maxWeight = INT_MIN;
+    int minU = -1, minV = -1;
+    int maxU = -1, maxV = -1;
 
     cout << "Enter edges (u v weight) where u and v are vertex indices:\n";
     if (isDirected) {
@@ -71,6 +80,19 @@ void createAdjacencyMatrix() {
             cout << "Invalid weight. Weight must be positive.\n";
             i--;
             continue;
+        }
+        
+        // Update statistics
+        totalWeight += weight;
+        if (weight < minWeight) {
+            minWeight = weight;
+            minU = u;
+            minV = w;
+        }
+        if (weight > maxWeight) {
+            maxWeight = weight;
+            maxU = u;
+            maxV = w;
         }
         
         // Handle self-loop
@@ -108,8 +130,19 @@ void createAdjacencyMatrix() {
         cout << "\n(Row i, Column j represents edge from vertex i to vertex j)\n";
     }
     
+    // Display statistics
+    cout << "\n=== Graph Statistics ===\n";
+    cout << "Total number of edges: " << e << "\n";
+    cout << "Total weight of all edges: " << totalWeight << "\n";
+    
+    if (e > 0) {
+        cout << "Average edge weight: " << (double)totalWeight / e << "\n";
+        cout << "Minimum weight edge: " << minWeight << " (from vertex " << minU << " to vertex " << minV << ")\n";
+        cout << "Maximum weight edge: " << maxWeight << " (from vertex " << maxU << " to vertex " << maxV << ")\n";
+    }
+    
+   
 }
-
 
 void createAdjacencyList() {
     int v, e;
@@ -137,7 +170,15 @@ void createAdjacencyList() {
         Node* next;
     };
 
+
     vector<Node*> adjList(v, nullptr);
+
+    // Variables to track statistics
+    int totalWeight = 0;
+    int minWeight = INT_MAX;
+    int maxWeight = INT_MIN;
+    int minU = -1, minV = -1;
+    int maxU = -1, maxV = -1;
 
     cout << "Enter edges (u v weight) where u and v are vertex indices:\n";
     if (isDirected) {
@@ -161,6 +202,19 @@ void createAdjacencyList() {
             cout << "Invalid weight. Weight must be positive.\n";
             i--;
             continue;
+        }
+        
+        // Update statistics
+        totalWeight += weight;
+        if (weight < minWeight) {
+            minWeight = weight;
+            minU = u;
+            minV = w;
+        }
+        if (weight > maxWeight) {
+            maxWeight = weight;
+            maxU = u;
+            maxV = w;
         }
         
         // Handle self-loop
@@ -203,6 +257,17 @@ void createAdjacencyList() {
     
     if (isDirected) {
         cout << "\n(Vertex i's list shows all vertices reachable FROM vertex i)\n";
+    }
+    
+    // Display statistics
+    cout << "\n=== Graph Statistics ===\n";
+    cout << "Total number of edges: " << e << "\n";
+    cout << "Total weight of all edges: " << totalWeight << "\n";
+    
+    if (e > 0) {
+        cout << "Average edge weight: " << (double)totalWeight / e << "\n";
+        cout << "Minimum weight edge: " << minWeight << " (from vertex " << minU << " to vertex " << minV << ")\n";
+        cout << "Maximum weight edge: " << maxWeight << " (from vertex " << maxU << " to vertex " << maxV << ")\n";
     }
     
     // Clean up dynamically allocated memory
